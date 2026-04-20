@@ -1,0 +1,82 @@
+.cgu-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.cgu-card {
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cgu-header {
+  text-align: center;
+}
+
+.cgu-header h2 {
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.cgu-header p {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+.cgu-scroll-box {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  height: 300px;
+  overflow-y: auto;
+  font-size: 0.875rem;
+}
+
+.cgu-scroll-box h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cgu-scroll-box p {
+  line-height: 1.6;
+}
+
+.cgu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  user-select: none;
+}
+
+.checkbox-container input {
+  margin-top: 0.25rem;
+  cursor: pointer;
+}
+
+.checkbox-container input:disabled {
+  cursor: not-allowed;
+}
+
+.scroll-warning {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}

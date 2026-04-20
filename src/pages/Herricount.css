@@ -1,0 +1,301 @@
+.herricount-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subtitle {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.groupes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.groupe-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.groupe-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.groupe-card.archived {
+  opacity: 0.7;
+  background-color: var(--color-bg-secondary);
+}
+
+.groupe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.groupe-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.badge.actif {
+  background-color: rgba(45, 155, 111, 0.1);
+  color: var(--color-primary);
+}
+
+.badge.soldé {
+  background-color: rgba(100, 116, 139, 0.1);
+  color: var(--color-text-light);
+}
+
+.groupe-participants {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+.groupe-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: auto;
+}
+
+.participants-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.participant-pill {
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary-dark);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.participant-pill button {
+  background: none;
+  border: none;
+  color: currentColor;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+}
+
+.participant-pill button:hover {
+  opacity: 1;
+}
+
+/* GroupeDetail Styles */
+.groupe-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.back-btn:hover {
+  color: var(--color-text);
+}
+
+.tabs {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  cursor: pointer;
+  position: relative;
+}
+
+.tab.active {
+  color: var(--color-primary);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+.depenses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.depense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.depense-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.depense-info p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+}
+
+.depense-montant {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Equilibre / Transaction Styles */
+.equilibre-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.equilibre-summary {
+  display: flex;
+  gap: 1rem;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transaction-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.transaction-parties {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.user-avatar.debiteur {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.user-avatar.creancier {
+  background-color: #dcfce7;
+  color: #22c55e;
+}
+
+.transaction-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-text-light);
+  min-width: 80px;
+}
+
+.transaction-flow .line {
+  height: 2px;
+  width: 100%;
+  background-color: var(--color-border);
+  position: relative;
+}
+
+.transaction-flow .line::after {
+  content: '▶';
+  position: absolute;
+  right: -5px;
+  top: -8px;
+  font-size: 12px;
+  color: var(--color-border);
+}
+
+.transaction-amount-badge {
+  background-color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 800;
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}

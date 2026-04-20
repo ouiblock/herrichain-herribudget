@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO de base -->
+    <title>Herribudget — Gérez votre budget local, libre et souverain | Herrichain</title>
+    <meta name="description" content="Herribudget est une application gratuite et open source de gestion de budget personnel. 100% local, zéro tracking, RGPD compliant. Développée par Artean Digital pour l'association Herrichain.">
+    <meta name="keywords" content="budget personnel, gestion budget, application budget gratuite, open source, RGPD, Herrichain, Artean Digital, taux endettement, calculateur crédit, tricount budget">
+    <meta name="author" content="Xavier CHAUMET-NICOLAS — Association Herrichain">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://herribudget.fr/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Herribudget — Votre budget. Local. Libre.">
+    <meta property="og:description" content="Application open source de gestion de budget personnel. Zéro tracking, 100% local, RGPD by design. Projet souverain de l'association Herrichain.">
+    <meta property="og:image" content="https://herribudget.fr/assets/og-image.png">
+    <meta property="og:url" content="https://herribudget.fr">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="Herribudget">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Herribudget — Budget local, libre et souverain">
+    <meta name="twitter:description" content="Gérez votre budget sans tracking ni serveur. Open source. Gratuit. Par Herrichain & Artean Digital.">
+    <meta name="twitter:image" content="https://herribudget.fr/assets/og-image.png">
+
+    <!-- JSON-LD Scripts -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Herribudget",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web, Android, iOS",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "description": "Application open source de gestion de budget personnel. 100% local, sans tracking, RGPD compliant.",
+      "url": "https://herribudget.fr",
+      "downloadUrl": "https://herribudget.fr",
+      "softwareVersion": "1.2",
+      "author": {
+        "@type": "Organization",
+        "name": "Association Herrichain"
+      },
+      "developer": {
+        "@type": "Organization",
+        "name": "Artean Digital"
+      },
+      "isAccessibleForFree": true,
+      "privacyPolicyUrl": "https://herribudget.fr/privacy"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NGO",
+      "name": "Association Herrichain",
+      "description": "Association à but non lucratif portant le projet Herribudget, application souveraine de gestion de budget personnel.",
+      "url": "https://herrichain.org",
+      "member": {
+        "@type": "Person",
+        "name": "Xavier CHAUMET-NICOLAS",
+        "jobTitle": "Président"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Xavier CHAUMET-NICOLAS",
+      "jobTitle": "Président",
+      "worksFor": {
+        "@type": "NGO",
+        "name": "Association Herrichain",
+        "url": "https://herrichain.org"
+      },
+      "url": "https://herrichain.org",
+      "knowsAbout": ["Gestion budget personnel", "Open source", "Souveraineté numérique", "RGPD", "Finances personnelles"]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Herribudget est-il vraiment gratuit ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, Herribudget est entièrement gratuit. C'est un projet open source à but non lucratif porté par l'association Herrichain."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Mes données financières sont-elles sécurisées ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Vos données ne quittent jamais votre appareil. Elles sont stockées dans la mémoire locale de votre navigateur (IndexedDB). Herribudget ne possède aucun serveur de données utilisateur."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
