@@ -53,6 +53,7 @@
   color: var(--color-text-light);
   margin-bottom: 2.5rem;
   max-width: 90%;
+  text-align: justify;
 }
 
 .hero-tag {
@@ -229,6 +230,7 @@
   color: var(--color-text-light);
   font-size: 0.875rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .vision-section {
@@ -274,6 +276,7 @@
   color: var(--color-text-light);
   font-size: 0.875rem;
   margin-bottom: 2rem;
+  text-align: justify;
 }
 
 .step-visual {
@@ -410,6 +413,7 @@
   color: var(--color-text-light);
   font-size: 1.125rem;
   margin-bottom: 2rem;
+  text-align: justify;
 }
 
 .vision-list {
@@ -453,6 +457,7 @@
   font-size: 1.125rem;
   max-width: 800px;
   margin: 0 auto 4rem auto;
+  text-align: justify;
 }
 
 .ngo-card {
@@ -492,20 +497,41 @@
 }
 
 @media (max-width: 900px) {
-  .hero-section, .vision-container {
+  .hero-section, .vision-container, .sequence-grid {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
   .features-grid {
     grid-template-columns: 1fr 1fr;
   }
+  .hero-content h1 {
+    font-size: 2.75rem;
+  }
+  .landing-nav-links {
+    display: none; /* Mobile menu needed eventually, but hiding for now to clean up */
+  }
+  .final-cta-section h2 {
+    font-size: 2rem;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 630px) {
   .features-grid {
     grid-template-columns: 1fr;
   }
   .hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+  }
+  .sequence-grid {
+    gap: 4rem;
+  }
+  .ngo-card {
+    padding: 1.5rem;
+  }
+  .ngo-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }
 /* Herricount Showcase */
@@ -635,6 +661,7 @@
   font-size: 0.875rem;
   color: var(--color-text-light);
   line-height: 1.6;
+  text-align: justify;
 }
 
 @media (max-width: 900px) {
