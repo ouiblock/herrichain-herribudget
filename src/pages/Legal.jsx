@@ -19,7 +19,6 @@ const Legal = () => {
         <p className="mb-6 text-light">
           <strong>Association Herrichain</strong><br />
           Président : Xavier CHAUMET-NICOLAS<br />
-          [Adresse du siège social]<br />
           Numéro RNA : W641015204<br />
           Contact : contact@herrichain.org
         </p>
