@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CreditCard, Plus, Trash2, Calendar, CheckCircle } from 'lucide-react';
+import { CreditCard, Plus, Trash2, Calendar, CheckCircle, Pencil } from 'lucide-react';
 import { db } from '../db';
 import './Charges.css';
 
@@ -19,6 +19,8 @@ const Charges = () => {
   const [newPonctuelle, setNewPonctuelle] = useState({
     libelle: '', montant: '', datePrevue: '', statut: 'avenir'
   });
+
+  const [editingCharge, setEditingCharge] = useState(null); // { type: 'recurrente'|'ponctuelle', data: {...} }
 
   const categories = ['Logement', 'Crédits', 'Énergie', 'Eau', 'Télécom', 'Assurances', 'Transport', 'Véhicule', 'Alimentation', 'Enfants', 'Abonnements', 'Santé', 'Épargne automatique', 'Autre'];
   const repartitions = ['100% Personnel', '100% Commun', '50/50'];
@@ -46,6 +48,27 @@ const Charges = () => {
     });
     setIsModalOpen(false);
     setNewPonctuelle({ libelle: '', montant: '', datePrevue: '', statut: 'avenir' });
+  };
+
+  const handleEditCharge = async (e) => {
+    e.preventDefault();
+    if (editingCharge.type === 'recurrente') {
+      await db.charges_recurrentes.update(editingCharge.data.id, {
+        ...editingCharge.data,
+        montant: Number(editingCharge.data.montant),
+        datePrelevement: Number(editingCharge.data.datePrelevement)
+      });
+    } else {
+      await db.charges_ponctuelles.update(editingCharge.data.id, {
+        ...editingCharge.data,
+        montant: Number(editingCharge.data.montant)
+      });
+    }
+    setEditingCharge(null);
+  };
+
+  const startEdit = (charge, type) => {
+    setEditingCharge({ type, data: { ...charge } });
   };
 
   const handleDeleteRecurrente = async (id) => {
@@ -109,12 +132,17 @@ const Charges = () => {
                    </span>
                  </div>
                </div>
-               <div className="flex items-center gap-4">
-                 <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>- {c.montant.toLocaleString('fr-FR')} €</span>
-                 <button onClick={() => handleDeleteRecurrente(c.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
-                   <Trash2 size={18} />
-                 </button>
-               </div>
+                <div className="flex items-center gap-2">
+                  <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>- {c.montant.toLocaleString('fr-FR')} €</span>
+                  <div className="flex gap-1">
+                    <button onClick={() => startEdit(c, 'recurrente')} style={{color: 'var(--color-primary)', padding: '0.5rem'}}>
+                      <Pencil size={18} />
+                    </button>
+                    <button onClick={() => handleDeleteRecurrente(c.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
             </div>
           ))}
         </div>
@@ -136,42 +164,71 @@ const Charges = () => {
                    </span>
                  </div>
                </div>
-               <div className="flex items-center gap-4">
-                 <span style={{fontSize: '1.25rem', fontWeight: 'bold', textDecoration: p.statut === 'paye' ? 'line-through' : 'none'}}>- {p.montant.toLocaleString('fr-FR')} €</span>
-                 <button onClick={() => handleDeletePonctuelle(p.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
-                   <Trash2 size={18} />
-                 </button>
-               </div>
+                <div className="flex items-center gap-2">
+                  <span style={{fontSize: '1.25rem', fontWeight: 'bold', textDecoration: p.statut === 'paye' ? 'line-through' : 'none'}}>- {p.montant.toLocaleString('fr-FR')} €</span>
+                  <div className="flex gap-1">
+                    <button onClick={() => startEdit(p, 'ponctuelle')} style={{color: 'var(--color-primary)', padding: '0.5rem'}}>
+                      <Pencil size={18} />
+                    </button>
+                    <button onClick={() => handleDeletePonctuelle(p.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal Add */}
-      {isModalOpen && (
+      {/* Modal Add/Edit */}
+      {(isModalOpen || editingCharge) && (
         <div className="modal-backdrop">
           <div className="modal-content card">
-            <h2 className="mb-4">Ajouter une charge</h2>
+            <h2 className="mb-4">{editingCharge ? 'Modifier la charge' : 'Ajouter une charge'}</h2>
             
-            <div className="tabs mb-4" style={{borderBottom: 'none'}}>
-               <button type="button" className={`btn ${activeTab === 'recurrentes' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('recurrentes')} style={{flex: 1}}>Récurrente</button>
-               <button type="button" className={`btn ${activeTab === 'ponctuelles' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('ponctuelles')} style={{flex: 1, marginLeft: '0.5rem'}}>Ponctuelle</button>
-            </div>
+            {!editingCharge && (
+              <div className="tabs mb-4" style={{borderBottom: 'none'}}>
+                <button type="button" className={`btn ${activeTab === 'recurrentes' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('recurrentes')} style={{flex: 1}}>Récurrente</button>
+                <button type="button" className={`btn ${activeTab === 'ponctuelles' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('ponctuelles')} style={{flex: 1, marginLeft: '0.5rem'}}>Ponctuelle</button>
+              </div>
+            )}
 
-            {activeTab === 'recurrentes' ? (
-              <form onSubmit={handleAddReccurente}>
+            {(editingCharge ? editingCharge.type === 'recurrente' : activeTab === 'recurrentes') ? (
+              <form onSubmit={editingCharge ? handleEditCharge : handleAddReccurente}>
                 <div className="form-group">
                   <label className="form-label">Libellé</label>
-                  <input type="text" className="form-control" value={newReccurente.libelle} onChange={e => setNewReccurente({...newReccurente, libelle: e.target.value})} required />
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    value={editingCharge ? editingCharge.data.libelle : newReccurente.libelle} 
+                    onChange={e => editingCharge 
+                      ? setEditingCharge({...editingCharge, data: {...editingCharge.data, libelle: e.target.value}})
+                      : setNewReccurente({...newReccurente, libelle: e.target.value})} 
+                    required 
+                  />
                 </div>
                 <div className="flex gap-4">
                   <div className="form-group" style={{flex: 1}}>
                     <label className="form-label">Montant (€)</label>
-                    <input type="number" className="form-control" value={newReccurente.montant} onChange={e => setNewReccurente({...newReccurente, montant: e.target.value})} required />
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.montant : newReccurente.montant} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, montant: e.target.value}})
+                        : setNewReccurente({...newReccurente, montant: e.target.value})} 
+                      required 
+                    />
                   </div>
                   <div className="form-group" style={{flex: 1}}>
                     <label className="form-label">Catégorie</label>
-                    <select className="form-control" value={newReccurente.categorie} onChange={e => setNewReccurente({...newReccurente, categorie: e.target.value})}>
+                    <select 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.categorie : newReccurente.categorie} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, categorie: e.target.value}})
+                        : setNewReccurente({...newReccurente, categorie: e.target.value})}
+                    >
                       {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
@@ -179,37 +236,77 @@ const Charges = () => {
                 <div className="flex gap-4">
                   <div className="form-group" style={{flex: 1}}>
                     <label className="form-label">Jour de prélèvement (1-31)</label>
-                    <input type="number" min="1" max="31" className="form-control" value={newReccurente.datePrelevement} onChange={e => setNewReccurente({...newReccurente, datePrelevement: e.target.value})} required />
+                    <input 
+                      type="number" 
+                      min="1" 
+                      max="31" 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.datePrelevement : newReccurente.datePrelevement} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, datePrelevement: e.target.value}})
+                        : setNewReccurente({...newReccurente, datePrelevement: e.target.value})} 
+                      required 
+                    />
                   </div>
                   <div className="form-group" style={{flex: 1}}>
                     <label className="form-label">Répartition</label>
-                    <select className="form-control" value={newReccurente.repartition} onChange={e => setNewReccurente({...newReccurente, repartition: e.target.value})}>
+                    <select 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.repartition : newReccurente.repartition} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, repartition: e.target.value}})
+                        : setNewReccurente({...newReccurente, repartition: e.target.value})}
+                    >
                       {repartitions.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </div>
                 </div>
                 <div className="flex justify-between mt-4">
-                  <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Annuler</button>
-                  <button type="submit" className="btn btn-primary">Sauvegarder</button>
+                  <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); setEditingCharge(null); }}>Annuler</button>
+                  <button type="submit" className="btn btn-primary">{editingCharge ? 'Mettre à jour' : 'Sauvegarder'}</button>
                 </div>
               </form>
             ) : (
-              <form onSubmit={handleAddPonctuelle}>
+              <form onSubmit={editingCharge ? handleEditCharge : handleAddPonctuelle}>
                  <div className="form-group">
                   <label className="form-label">Libellé (ex: Impôts, Vacances)</label>
-                  <input type="text" className="form-control" value={newPonctuelle.libelle} onChange={e => setNewPonctuelle({...newPonctuelle, libelle: e.target.value})} required />
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    value={editingCharge ? editingCharge.data.libelle : newPonctuelle.libelle} 
+                    onChange={e => editingCharge 
+                      ? setEditingCharge({...editingCharge, data: {...editingCharge.data, libelle: e.target.value}})
+                      : setNewPonctuelle({...newPonctuelle, libelle: e.target.value})} 
+                    required 
+                  />
                 </div>
                 <div className="form-group">
                     <label className="form-label">Montant estimé (€)</label>
-                    <input type="number" className="form-control" value={newPonctuelle.montant} onChange={e => setNewPonctuelle({...newPonctuelle, montant: e.target.value})} required />
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.montant : newPonctuelle.montant} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, montant: e.target.value}})
+                        : setNewPonctuelle({...newPonctuelle, montant: e.target.value})} 
+                      required 
+                    />
                 </div>
                 <div className="form-group">
                     <label className="form-label">Date prévue</label>
-                    <input type="date" className="form-control" value={newPonctuelle.datePrevue} onChange={e => setNewPonctuelle({...newPonctuelle, datePrevue: e.target.value})} required />
+                    <input 
+                      type="date" 
+                      className="form-control" 
+                      value={editingCharge ? editingCharge.data.datePrevue : newPonctuelle.datePrevue} 
+                      onChange={e => editingCharge 
+                        ? setEditingCharge({...editingCharge, data: {...editingCharge.data, datePrevue: e.target.value}})
+                        : setNewPonctuelle({...newPonctuelle, datePrevue: e.target.value})} 
+                      required 
+                    />
                 </div>
                 <div className="flex justify-between mt-4">
-                  <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Annuler</button>
-                  <button type="submit" className="btn btn-primary">Sauvegarder</button>
+                  <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); setEditingCharge(null); }}>Annuler</button>
+                  <button type="submit" className="btn btn-primary">{editingCharge ? 'Mettre à jour' : 'Sauvegarder'}</button>
                 </div>
               </form>
             )}

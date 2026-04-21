@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { TrendingUp, Plus, Trash2, Target } from 'lucide-react';
+import { TrendingUp, Plus, Trash2, Target, Pencil } from 'lucide-react';
 import { db } from '../db';
 import './Epargne.css';
 
@@ -13,6 +13,8 @@ const Epargne = () => {
   const [newObjectif, setNewObjectif] = useState({
     libelle: '', montantCible: '', dateCible: ''
   });
+
+  const [editingObjectif, setEditingObjectif] = useState(null);
 
   const mainEpargne = epargneList.length > 0 ? epargneList[0] : null;
 
@@ -34,6 +36,15 @@ const Epargne = () => {
     });
     setIsModalOpen(false);
     setNewObjectif({ libelle: '', montantCible: '', dateCible: '' });
+  };
+
+  const handleEditObjectif = async (e) => {
+    e.preventDefault();
+    await db.objectifs_epargne.update(editingObjectif.id, {
+      ...editingObjectif,
+      montantCible: Number(editingObjectif.montantCible)
+    });
+    setEditingObjectif(null);
   };
 
   const handleDeleteObjectif = async (id) => {
@@ -87,9 +98,14 @@ const Epargne = () => {
                    <Target color="var(--color-primary)" size={20} />
                    <h4 style={{margin: 0}}>{obj.libelle}</h4>
                  </div>
-                 <button onClick={() => handleDeleteObjectif(obj.id)} style={{color: 'var(--color-danger)'}}>
-                   <Trash2 size={16} />
-                 </button>
+                 <div className="flex gap-2">
+                   <button onClick={() => setEditingObjectif({...obj})} style={{color: 'var(--color-primary)'}}>
+                     <Pencil size={16} />
+                   </button>
+                   <button onClick={() => handleDeleteObjectif(obj.id)} style={{color: 'var(--color-danger)'}}>
+                     <Trash2 size={16} />
+                   </button>
+                 </div>
                </div>
                
                <div className="objectif-stats flex justify-between mb-2">
@@ -113,26 +129,51 @@ const Epargne = () => {
         {objectifsList.length === 0 && <p className="text-light">Aucun objectif d'épargne défini.</p>}
       </div>
 
-      {isModalOpen && (
+      {/* Modal Add/Edit Objectif */}
+      {(isModalOpen || editingObjectif) && (
         <div className="modal-backdrop">
           <div className="modal-content card">
-            <h2 className="mb-4">Nouvel Objectif</h2>
-            <form onSubmit={handleAddObjectif}>
+            <h2 className="mb-4">{editingObjectif ? 'Modifier l\'objectif' : 'Nouvel Objectif'}</h2>
+            <form onSubmit={editingObjectif ? handleEditObjectif : handleAddObjectif}>
                  <div className="form-group">
                   <label className="form-label">Libellé du projet</label>
-                  <input type="text" className="form-control" value={newObjectif.libelle} onChange={e => setNewObjectif({...newObjectif, libelle: e.target.value})} required />
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    value={editingObjectif ? editingObjectif.libelle : newObjectif.libelle} 
+                    onChange={e => editingObjectif 
+                      ? setEditingObjectif({...editingObjectif, libelle: e.target.value})
+                      : setNewObjectif({...newObjectif, libelle: e.target.value})} 
+                    required 
+                  />
                 </div>
                 <div className="form-group">
                     <label className="form-label">Montant cible (€)</label>
-                    <input type="number" className="form-control" value={newObjectif.montantCible} onChange={e => setNewObjectif({...newObjectif, montantCible: e.target.value})} required />
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      value={editingObjectif ? editingObjectif.montantCible : newObjectif.montantCible} 
+                      onChange={e => editingObjectif 
+                        ? setEditingObjectif({...editingObjectif, montantCible: e.target.value})
+                        : setNewObjectif({...newObjectif, montantCible: e.target.value})} 
+                      required 
+                    />
                 </div>
                 <div className="form-group">
                     <label className="form-label">Date d'échéance visée</label>
-                    <input type="date" className="form-control" value={newObjectif.dateCible} onChange={e => setNewObjectif({...newObjectif, dateCible: e.target.value})} required />
+                    <input 
+                      type="date" 
+                      className="form-control" 
+                      value={editingObjectif ? editingObjectif.dateCible : newObjectif.dateCible} 
+                      onChange={e => editingObjectif 
+                        ? setEditingObjectif({...editingObjectif, dateCible: e.target.value})
+                        : setNewObjectif({...newObjectif, dateCible: e.target.value})} 
+                      required 
+                    />
                 </div>
                 <div className="flex justify-between mt-4">
-                  <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Annuler</button>
-                  <button type="submit" className="btn btn-primary">Créer</button>
+                  <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); setEditingObjectif(null); }}>Annuler</button>
+                  <button type="submit" className="btn btn-primary">{editingObjectif ? 'Mettre à jour' : 'Créer'}</button>
                 </div>
             </form>
           </div>

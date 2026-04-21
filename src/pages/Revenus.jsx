@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Wallet, Plus, Trash2, AlertTriangle } from 'lucide-react';
+import { Wallet, Plus, Trash2, AlertTriangle, Pencil } from 'lucide-react';
 import { db } from '../db';
 import './Revenus.css';
 
@@ -15,6 +15,8 @@ const Revenus = () => {
   const [newRevenu, setNewRevenu] = useState({
     libelle: '', montant: '', frequence: 'mensuel', type: 'principal'
   });
+
+  const [editingRevenu, setEditingRevenu] = useState(null);
 
   const totalRevenus = useMemo(() => revenus.reduce((acc, curr) => acc + curr.montant, 0), [revenus]);
   const isSurvivalMode = totalRevenus === 0;
@@ -37,6 +39,15 @@ const Revenus = () => {
     });
     setIsModalOpen(false);
     setNewRevenu({ libelle: '', montant: '', frequence: 'mensuel', type: 'principal' });
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    await db.revenus.update(editingRevenu.id, {
+      ...editingRevenu,
+      montant: Number(editingRevenu.montant)
+    });
+    setEditingRevenu(null);
   };
 
   const handleDelete = async (id) => {
@@ -93,27 +104,34 @@ const Revenus = () => {
              </div>
              <div className="flex items-center gap-4">
                <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>{r.montant.toLocaleString('fr-FR')} €</span>
-               <button onClick={() => handleDelete(r.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
-                 <Trash2 size={18} />
-               </button>
+               <div className="flex gap-1">
+                 <button onClick={() => setEditingRevenu({...r})} style={{color: 'var(--color-primary)', padding: '0.5rem'}}>
+                   <Pencil size={18} />
+                 </button>
+                 <button onClick={() => handleDelete(r.id)} style={{color: 'var(--color-danger)', padding: '0.5rem'}}>
+                   <Trash2 size={18} />
+                 </button>
+               </div>
              </div>
           </div>
         ))}
       </div>
 
-      {/* Modal Add Revenu */}
-      {isModalOpen && (
+      {/* Modal Add/Edit Revenu */}
+      {(isModalOpen || editingRevenu) && (
         <div className="modal-backdrop">
           <div className="modal-content card">
-            <h2 className="mb-4">Ajouter un revenu</h2>
-            <form onSubmit={handleAdd}>
+            <h2 className="mb-4">{editingRevenu ? 'Modifier le revenu' : 'Ajouter un revenu'}</h2>
+            <form onSubmit={editingRevenu ? handleEdit : handleAdd}>
               <div className="form-group">
                 <label className="form-label">Libellé (ex: Salaire CDI, APL...)</label>
                 <input 
                   type="text" 
                   className="form-control" 
-                  value={newRevenu.libelle}
-                  onChange={e => setNewRevenu({...newRevenu, libelle: e.target.value})}
+                  value={editingRevenu ? editingRevenu.libelle : newRevenu.libelle}
+                  onChange={e => editingRevenu 
+                    ? setEditingRevenu({...editingRevenu, libelle: e.target.value})
+                    : setNewRevenu({...newRevenu, libelle: e.target.value})}
                   required 
                 />
               </div>
@@ -122,8 +140,10 @@ const Revenus = () => {
                 <input 
                   type="number" 
                   className="form-control" 
-                  value={newRevenu.montant}
-                  onChange={e => setNewRevenu({...newRevenu, montant: e.target.value})}
+                  value={editingRevenu ? editingRevenu.montant : newRevenu.montant}
+                  onChange={e => editingRevenu 
+                    ? setEditingRevenu({...editingRevenu, montant: e.target.value})
+                    : setNewRevenu({...newRevenu, montant: e.target.value})}
                   required 
                 />
               </div>
@@ -132,8 +152,10 @@ const Revenus = () => {
                     <label className="form-label">Type</label>
                     <select 
                       className="form-control"
-                      value={newRevenu.type}
-                      onChange={e => setNewRevenu({...newRevenu, type: e.target.value})}
+                      value={editingRevenu ? editingRevenu.type : newRevenu.type}
+                      onChange={e => editingRevenu 
+                        ? setEditingRevenu({...editingRevenu, type: e.target.value})
+                        : setNewRevenu({...newRevenu, type: e.target.value})}
                     >
                       <option value="principal">Principal (Salaire, Freelance)</option>
                       <option value="aides">Aides (CAF, RSA...)</option>
@@ -145,8 +167,10 @@ const Revenus = () => {
                     <label className="form-label">Fréquence</label>
                     <select 
                       className="form-control"
-                      value={newRevenu.frequence}
-                      onChange={e => setNewRevenu({...newRevenu, frequence: e.target.value})}
+                      value={editingRevenu ? editingRevenu.frequence : newRevenu.frequence}
+                      onChange={e => editingRevenu 
+                        ? setEditingRevenu({...editingRevenu, frequence: e.target.value})
+                        : setNewRevenu({...newRevenu, frequence: e.target.value})}
                     >
                       <option value="mensuel">Mensuel</option>
                       <option value="trimestriel">Trimestriel</option>
@@ -156,8 +180,8 @@ const Revenus = () => {
                  </div>
               </div>
               <div className="flex justify-between mt-4">
-                <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Annuler</button>
-                <button type="submit" className="btn btn-primary">Sauvegarder</button>
+                <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); setEditingRevenu(null); }}>Annuler</button>
+                <button type="submit" className="btn btn-primary">{editingRevenu ? 'Mettre à jour' : 'Sauvegarder'}</button>
               </div>
             </form>
           </div>
